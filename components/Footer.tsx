@@ -1,6 +1,12 @@
 import Link from 'next/link'
+import { getContactInfo } from '../app/actions'
 
-export default function Footer() {
+export const dynamic = 'force-dynamic'
+
+export default async function Footer() {
+    const contactInfo = await getContactInfo()
+    const metadata = contactInfo?.metadata || {}
+
     return (
         <footer className="bg-gray-900 text-gray-300 border-t border-gray-800">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -17,6 +23,13 @@ export default function Footer() {
                         <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
                             Dedicated to building a better future through community initiatives, education, and sustainable development since 1924.
                         </p>
+
+                        {/* Social Icons based on Metadata */}
+                        <div className="flex gap-4 mt-6">
+                            {metadata.facebook && <a href={metadata.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">Facebook</a>}
+                            {metadata.twitter && <a href={metadata.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">Twitter</a>}
+                            {metadata.instagram && <a href={metadata.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">Instagram</a>}
+                        </div>
                     </div>
 
                     <div>
@@ -32,10 +45,17 @@ export default function Footer() {
                     <div>
                         <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Contact</h3>
                         <ul className="space-y-3 text-sm">
-                            <li>123 Charity Lane</li>
-                            <li>New York, NY 10012</li>
-                            <li>contact@ngofoundation.org</li>
-                            <li>+1 (555) 123-4567</li>
+                            {metadata.address ? (
+                                <li>{metadata.address}</li>
+                            ) : (
+                                <>
+                                    <li>123 Charity Lane</li>
+                                    <li>New York, NY 10012</li>
+                                </>
+                            )}
+
+                            {metadata.email && <li><a href={`mailto:${metadata.email}`} className="hover:text-blue-400">{metadata.email}</a></li>}
+                            {metadata.phone && <li><a href={`tel:${metadata.phone}`} className="hover:text-blue-400">{metadata.phone}</a></li>}
                         </ul>
                     </div>
                 </div>

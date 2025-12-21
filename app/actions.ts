@@ -1,99 +1,170 @@
 'use server'
 
 import dbConnect from '@/lib/mongodb'
-import Content from '@/models/Content'
+import Content, { IContent } from '@/models/Content'
 import { revalidatePath } from 'next/cache'
+
+// --- milestones ---
+export async function getMilestones() {
+    await dbConnect()
+    const milestones = await Content.find({ type: 'milestone' }).sort({ year: -1 }).lean()
+    // Convert _id to string to pass to client components if needed, or return as is for server components
+    return JSON.parse(JSON.stringify(milestones))
+}
 
 export async function addMilestone(formData: FormData) {
     await dbConnect()
 
-    const title = formData.get('title') as string
-    const description = formData.get('description') as string
-    const year = formData.get('year') as string
+    const year = formData.get('year')
+    const title = formData.get('title')
+    const description = formData.get('description')
 
-    if (!title || !description || !year) {
+    if (!year || !title || !description) {
         throw new Error('Missing required fields')
     }
 
     await Content.create({
         type: 'milestone',
+        year: Number(year),
         title,
         description,
-        year: parseInt(year, 10),
     })
 
-    revalidatePath('/roadmap')
     revalidatePath('/admin')
+    revalidatePath('/roadmap')
+    revalidatePath('/')
+}
+
+// --- recent works ---
+export async function getRecentWorks() {
+    await dbConnect()
+    const works = await Content.find({ type: 'recent_work' }).sort({ createdAt: -1 }).lean()
+    return JSON.parse(JSON.stringify(works)) as IContent[]
+}
+
+export async function getFeaturedWorks() {
+    await dbConnect()
+    const works = await Content.find({ type: 'recent_work', isFeatured: true }).sort({ createdAt: -1 }).lean()
+    return JSON.parse(JSON.stringify(works)) as IContent[]
 }
 
 export async function addRecentWork(formData: FormData) {
     await dbConnect()
 
-    const title = formData.get('title') as string
-    const description = formData.get('description') as string
-    const category = formData.get('category') as string
+    const title = formData.get('title')
+    const category = formData.get('category')
+    const description = formData.get('description')
+    const image = formData.get('image') // Image URL
+    const isFeatured = formData.get('isFeatured') === 'on'
 
-    if (!title || !description || !category) {
+    if (!title || !category || !description) {
         throw new Error('Missing required fields')
     }
 
     await Content.create({
         type: 'recent_work',
         title,
-        description,
         category,
+        description,
+        image,
+        isFeatured
     })
 
-    revalidatePath('/')
     revalidatePath('/admin')
+    revalidatePath('/')
 }
 
+export async function toggleFeatured(id: string, currentStatus: boolean) {
+    await dbConnect()
+    await Content.findByIdAndUpdate(id, { isFeatured: !currentStatus })
+    revalidatePath('/admin')
+    revalidatePath('/')
+}
+
+// --- generic delete ---
 export async function deleteContent(id: string) {
     await dbConnect()
-
     await Content.findByIdAndDelete(id)
+    revalidatePath('/admin')
+    revalidatePath('/roadmap')
+    revalidatePath('/')
+}
+
+// --- page sections & contact info ---
+
+// Fetch a specific page section by title (used as key, e.g., 'Hero', 'About')
+export async function getPageSection(sectionTitle: string) {
+    await dbConnect()
+    const section = await Content.findOne({ type: 'page_section', title: sectionTitle }).lean()
+    return JSON.parse(JSON.stringify(section))
+}
+
+// Update or Create a page section
+// Expects generic metadata object
+export async function updatePageSection(formData: FormData) {
+    await dbConnect()
+
+    const sectionTitle = formData.get('sectionTitle') as string
+    if (!sectionTitle) return;
+
+    // We'll collect all other form fields into metadata
+    const metadata: Record<string, any> = {}
+    formData.forEach((value, key) => {
+        if (key !== 'sectionTitle') {
+            metadata[key] = value
+        }
+    })
+
+    await Content.findOneAndUpdate(
+        { type: 'page_section', title: sectionTitle },
+        {
+            type: 'page_section',
+            title: sectionTitle,
+            description: 'Dynamic Section',
+            metadata
+        },
+        { upsert: true, new: true }
+    )
 
     revalidatePath('/')
-    revalidatePath('/roadmap')
     revalidatePath('/admin')
 }
 
-export async function getMilestones() {
+// Contact Info - singleton pattern ideally, or by specific title 'ContactInfo'
+export async function getContactInfo() {
     await dbConnect()
-    // Sort by year ascending (Oldest to Newest)
-    const milestones = await Content.find({ type: 'milestone' }).sort({ year: 1 }).lean()
-
-    // Serialize for passing to components
-    return milestones.map((doc: any) => ({
-        _id: doc._id.toString(),
-        title: doc.title,
-        description: doc.description,
-        year: doc.year,
-        type: doc.type,
-        createdAt: doc.createdAt?.toISOString(),
-        updatedAt: doc.updatedAt?.toISOString(),
-    }))
+    const info = await Content.findOne({ type: 'contact_info', title: 'GlobalContact' }).lean()
+    return JSON.parse(JSON.stringify(info))
 }
 
-export async function getRecentWorks() {
+export async function updateContactInfo(formData: FormData) {
     await dbConnect()
-    // Features '3 Most Recent' works. Sort by createdAt desc.
-    // For Admin we might want all of them, but reusing this for now. 
-    // If we need ALL specific for admin, we can add getAdminRecentWorks or similar, 
-    // but for now let's modify this to return more if needed or create a new one.
-    // Actually, let's keep this for public and make a new one or just use this if 3 is ok? 
-    // User asked for "complete NGO project", and admin usually lists all.
-    // Let's make a getContentForAdmin that gets everything.
 
-    const works = await Content.find({ type: 'recent_work' }).sort({ createdAt: -1 }).lean()
+    const email = formData.get('email')
+    const phone = formData.get('phone')
+    const address = formData.get('address')
+    const facebook = formData.get('facebook')
+    const twitter = formData.get('twitter')
+    const instagram = formData.get('instagram')
 
-    return works.map((doc: any) => ({
-        _id: doc._id.toString(),
-        title: doc.title,
-        description: doc.description,
-        category: doc.category,
-        type: doc.type,
-        createdAt: doc.createdAt?.toISOString(),
-        updatedAt: doc.updatedAt?.toISOString(),
-    }))
+    await Content.findOneAndUpdate(
+        { type: 'contact_info', title: 'GlobalContact' },
+        {
+            type: 'contact_info',
+            title: 'GlobalContact', // Consistent key
+            description: 'Global Contact Information',
+            metadata: {
+                email,
+                phone,
+                address,
+                facebook,
+                twitter,
+                instagram
+            }
+        },
+        { upsert: true, new: true }
+    )
+
+    revalidatePath('/')
+    revalidatePath('/admin')
 }

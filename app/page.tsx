@@ -1,13 +1,23 @@
-import { getRecentWorks } from './actions'
+import { getFeaturedWorks, getRecentWorks, getPageSection } from './actions'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Home() {
   const recentWorks = await getRecentWorks()
+  const featuredWorks = await getFeaturedWorks()
+  const heroSection = await getPageSection('Hero')
+  const heroData = heroSection?.metadata || {}
+
+  // Defaults if no data found
+  const headline = heroData.headline || "A Century of Impact"
+  const subheadline = heroData.subheadline || "Dedication to community, sustainable growth, and brighter futures for over 100 years."
+  const establishedText = heroData.establishedText || "Established 1924"
+
+  const featuredWork = featuredWorks.length > 0 ? featuredWorks[0] : null
 
   return (
-    <div className="bg-gray-50 text-gray-900">
+    <div className="bg-gray-50 text-gray-900 font-sans">
       {/* Hero Section */}
       <section className="relative bg-slate-900 text-white py-32 md:py-48 px-6 overflow-hidden">
         <div className="absolute inset-0 bg-blue-600 opacity-10 pattern-grid-lg"></div>
@@ -16,13 +26,14 @@ export default async function Home() {
 
         <div className="relative max-w-5xl mx-auto text-center space-y-8 animate-fade-in-up">
           <span className="inline-block py-1 px-3 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 font-medium text-sm">
-            Established 1924
+            {establishedText}
           </span>
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight">
-            A Century of <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Impact</span>
+            {/* Split headline for visual or just render as is. Simple render for now/ */}
+            {headline}
           </h1>
           <p className="text-xl md:text-2xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Dedication to community, sustainable growth, and brighter futures for over 100 years.
+            {subheadline}
           </p>
           <div className="pt-8 flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -40,6 +51,37 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* Featured Post Information Section */}
+      {featuredWork && (
+        <section className="py-20 px-6 max-w-7xl mx-auto">
+          <div className="bg-white rounded-3xl overflow-hidden shadow-2xl border border-gray-100 flex flex-col lg:flex-row">
+            <div className="lg:w-1/2 relative bg-gray-200 min-h-[400px]">
+              {/* Image */}
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${featuredWork.image || '/placeholder.png'})` }}
+              />
+              <div className="absolute top-6 left-6">
+                <span className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold leading-none text-white bg-blue-600 shadow-sm uppercase tracking-wider">
+                  Featured Project
+                </span>
+              </div>
+            </div>
+            <div className="lg:w-1/2 p-12 flex flex-col justify-center">
+              <span className="text-blue-600 font-bold tracking-wide uppercase text-sm mb-2">{featuredWork.category}</span>
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">{featuredWork.title}</h2>
+              <p className="text-lg text-gray-600 leading-relaxed mb-8">
+                {featuredWork.description}
+              </p>
+              <Link href="#donate" className="inline-flex items-center font-bold text-blue-600 hover:text-blue-800 transition-colors gap-2 group">
+                Support this Project
+                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Mission Stats (Placeholder-ish) */}
       <section className="bg-white py-12 border-b border-gray-100">
@@ -81,8 +123,14 @@ export default async function Home() {
             recentWorks.map((work) => (
               <article key={work._id} className="flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
                 <div className="h-48 bg-gray-100 relative overflow-hidden group">
-                  {/* Placeholder for image */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 to-blue-50 group-hover:scale-105 transition-transform duration-500" />
+                  {/* Image */}
+                  <div
+                    className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
+                    style={{ backgroundImage: `url(${work.image || '/placeholder.png'})` }}
+                  />
+                  {/* Gradient overlay for text readability if needed, or just hover effect */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
                   <div className="absolute top-4 left-4">
                     <span className="inline-block px-3 py-1 bg-white/90 backdrop-blur text-blue-700 text-xs font-bold uppercase tracking-wider rounded-md shadow-sm">
                       {work.category || 'Project'}
@@ -97,7 +145,8 @@ export default async function Home() {
                     {work.description}
                   </p>
                   <div className="mt-auto pt-4 border-t border-gray-50 flex justify-between items-center text-sm text-gray-400">
-                    <span>Added just now</span>
+                    <span>{work.createdAt ? new Date(work.createdAt).toLocaleDateString() : 'Recently'}</span>
+                    {work.isFeatured && <span className="text-amber-500 font-bold text-xs uppercase">Featured</span>}
                   </div>
                 </div>
               </article>
