@@ -2,6 +2,7 @@
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
+// lib/auth.ts
 export const authOptions: NextAuthOptions = {
     providers: [
         GoogleProvider({
@@ -13,13 +14,15 @@ export const authOptions: NextAuthOptions = {
         async signIn({ user }) {
             const allowedEmails = process.env.ADMIN_EMAILS?.split(",") || [];
             if (user.email && allowedEmails.includes(user.email)) {
-                return true; // Authorized
+                return true;
             }
-            return false; // Access Denied
+            return false;
         },
     },
+    /* DELETE OR COMMENT OUT THIS SECTION TO FIX THE LOOP:
     pages: {
         signIn: "/api/auth/signin",
         error: "/api/auth/error",
     },
+    */
 };
