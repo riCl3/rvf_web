@@ -1,22 +1,42 @@
-// app/page.tsx
-import Link from 'next/link';
+// app/admin/page.tsx
+import mongoose from 'mongoose';
 
-export default function HomePage() {
+// 1. Tell the website what a "Work" looks like
+const WorkSchema = new mongoose.Schema({
+    title: String,
+    description: String,
+});
+
+const Work = mongoose.models.Work || mongoose.model('Work', WorkSchema);
+
+export default function AdminPage() {
+    async function createWork(formData: FormData) {
+        'use server'
+        // 2. Connect to the database
+        if (mongoose.connection.readyState === 0) {
+            await mongoose.connect(process.env.MONGODB_URI!);
+        }
+
+        // 3. Extract the data from your form
+        const title = formData.get('title');
+        const description = formData.get('description');
+
+        // 4. Save it!
+        await Work.create({ title, description });
+
+        console.log("Saved successfully to MongoDB!");
+    }
+
     return (
-        <main className="flex flex-col items-center justify-center min-h-screen p-24 bg-slate-50">
-            <h1 className="text-4xl font-bold text-blue-900 mb-4">
-                Welcome to Our 100-Year NGO
-            </h1>
-            <p className="text-lg text-gray-700 mb-8 text-center max-w-2xl">
-                We are transitioning from a historic club to a modern NGO.
-                Our roadmap and mission will appear here soon.
-            </p>
-            <Link
-                href="/admin"
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-            >
-                Go to Admin Dashboard
-            </Link>
-        </main>
+        <div className="p-10 max-w-lg mx-auto">
+            <h1 className="text-2xl font-bold mb-5">Add Recent Work</h1>
+            <form action={createWork} className="flex flex-col gap-4 bg-white p-6 shadow-md rounded">
+                <input name="title" placeholder="Project Title" className="border p-2 rounded text-black" required />
+                <textarea name="description" placeholder="Description" className="border p-2 rounded text-black" />
+                <button type="submit" className="bg-green-600 text-white p-2 rounded hover:bg-green-700">
+                    Save to Database
+                </button>
+            </form>
+        </div>
     );
 }
