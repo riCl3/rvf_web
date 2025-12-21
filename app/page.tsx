@@ -162,6 +162,26 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Gallery Section */}
+      {galleryImages.length > 0 && (
+        <section id="gallery" className="py-24 bg-gray-50 border-t border-gray-100">
+          <div className="max-w-7xl mx-auto px-6">
+            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Our Gallery</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {galleryImages.map((img: IContent) => (
+                <div key={img._id} className="relative aspect-square group overflow-hidden rounded-2xl cursor-pointer">
+                  <div
+                    className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
+                    style={{ backgroundImage: `url(${img.image})` }}
+                  />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Volunteer Section */}
       <section id="volunteer" className="bg-blue-50 py-24 px-6">
         <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row">

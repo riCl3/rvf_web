@@ -24,12 +24,14 @@ export default async function AdminPage() {
     const heroSection = await getPageSection('Hero')
     const benefitsSection = await getPageSection('Benefits')
     const statsSection = await getPageSection('Stats')
+    const settingsSection = await getPageSection('SiteSettings')
     const galleryImages = await getGalleryImages()
 
     const contactMetadata = contactInfo?.metadata || {}
     const heroMetadata = heroSection?.metadata || {}
     const benefitsMetadata = benefitsSection?.metadata || {}
     const statsMetadata = statsSection?.metadata || {}
+    const settingsMetadata = settingsSection?.metadata || {}
 
     return (
         <div className="min-h-screen bg-gray-50 p-6 md:p-12 font-sans">
@@ -42,7 +44,7 @@ export default async function AdminPage() {
                     <p className="text-gray-500 mt-2 text-lg">Manage your website content, projects, and settings.</p>
                 </header>
 
-                {/* --- SECTIONS: Using a simple vertical layout for now with distinct headers --- */}
+                {/* --- SECTIONS --- */}
 
                 {/* 1. GENERAL SETTINGS (Contact Info) */}
                 <section className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
@@ -54,29 +56,29 @@ export default async function AdminPage() {
                         <form action={updateContactInfo} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                                <input type="email" name="email" defaultValue={contactMetadata.email} placeholder="contact@ngo.org" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3 focus:ring-blue-500 focus:border-blue-500" />
+                                <input type="email" name="email" defaultValue={contactMetadata.email} placeholder="contact@ngo.org" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                                <input type="tel" name="phone" defaultValue={contactMetadata.phone} placeholder="+1 234 567 890" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3 focus:ring-blue-500 focus:border-blue-500" />
+                                <input type="tel" name="phone" defaultValue={contactMetadata.phone} placeholder="+1 234 567 890" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
                             </div>
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Physical Address</label>
-                                <input type="text" name="address" defaultValue={contactMetadata.address} placeholder="123 Charity Lane, City" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3 focus:ring-blue-500 focus:border-blue-500" />
+                                <input type="text" name="address" defaultValue={contactMetadata.address} placeholder="123 Charity Lane, City" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
                             </div>
 
                             {/* Socials */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Facebook URL</label>
-                                <input type="url" name="facebook" defaultValue={contactMetadata.facebook} placeholder="https://facebook.com/..." className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3 focus:ring-blue-500 focus:border-blue-500" />
+                                <input type="url" name="facebook" defaultValue={contactMetadata.facebook} placeholder="https://facebook.com/..." className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Twitter/X URL</label>
-                                <input type="url" name="twitter" defaultValue={contactMetadata.twitter} placeholder="https://twitter.com/..." className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3 focus:ring-blue-500 focus:border-blue-500" />
+                                <input type="url" name="twitter" defaultValue={contactMetadata.twitter} placeholder="https://twitter.com/..." className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Instagram URL</label>
-                                <input type="url" name="instagram" defaultValue={contactMetadata.instagram} placeholder="https://instagram.com/..." className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3 focus:ring-blue-500 focus:border-blue-500" />
+                                <input type="url" name="instagram" defaultValue={contactMetadata.instagram} placeholder="https://instagram.com/..." className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
                             </div>
 
                             <div className="md:col-span-2 pt-4">
@@ -88,16 +90,47 @@ export default async function AdminPage() {
                     </div>
                 </section>
 
-                {/* 2. HOMEPAGE CONTENT (Hero) */}
+                {/* 2. SITE BRANDING (Favicon, Logo, Title) */}
                 <section className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                     <div className="px-8 py-6 border-b border-gray-100 bg-gray-50/50">
-                        <h2 className="text-2xl font-bold text-gray-800">Stats Section</h2>
-                        <p className="text-gray-500 text-sm">Update the impact numbers on the homepage.</p>
+                        <h2 className="text-2xl font-bold text-gray-800">Site Branding</h2>
+                        <p className="text-gray-500 text-sm">Update your logo, icon, and site title.</p>
                     </div>
-                    <div className="p-8 space-y-8">
-                        {/* Hero Section Form */}
+                    <div className="p-8">
+                        <form action={updatePageSection} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <input type="hidden" name="sectionTitle" value="SiteSettings" />
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Browser Tab Title</label>
+                                <input type="text" name="siteTitle" defaultValue={settingsMetadata.siteTitle || "NGO Website"} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Logo URL (Header)</label>
+                                <input type="url" name="logo" defaultValue={settingsMetadata.logo || ""} placeholder="https://example.com/logo.png" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Favicon URL (Tab Icon)</label>
+                                <input type="url" name="favicon" defaultValue={settingsMetadata.favicon || ""} placeholder="https://example.com/favicon.ico" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                            </div>
+                            <div className="md:col-span-2 pt-4">
+                                <SubmitButton className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-2.5 rounded-lg transition-colors">
+                                    Update Branding
+                                </SubmitButton>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                {/* 3. HERO CONTENT */}
+                <section className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="px-8 py-6 border-b border-gray-100 bg-gray-50/50">
+                        <h2 className="text-2xl font-bold text-gray-800">Hero & Stats</h2>
+                        <p className="text-gray-500 text-sm">Update the homepage hero banner and impact numbers.</p>
+                    </div>
+                    <div className="p-8 space-y-12">
+
+                        {/* Hero Sub-Form */}
                         <div>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 border-l-4 border-blue-500 pl-3">Hero Banner</h3>
+                            <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">Hero Banner</h3>
                             <form action={updatePageSection} className="space-y-4">
                                 <input type="hidden" name="sectionTitle" value="Hero" />
                                 <div>
@@ -115,55 +148,51 @@ export default async function AdminPage() {
                                 <SubmitButton className="bg-gray-900 hover:bg-black text-white px-5 py-2 rounded-lg text-sm font-medium">Update Hero Section</SubmitButton>
                             </form>
                         </div>
-                    </div>
-                </section>
 
-                {/* 3. STATS SECTION Manager */}
-                <section className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-8">
-                    <div className="px-8 py-6 border-b border-gray-100 bg-gray-50/50">
-                        <h2 className="text-2xl font-bold text-gray-800">Stats Section</h2>
-                        <p className="text-gray-500 text-sm">Update the impact numbers on the homepage.</p>
-                    </div>
-                    <div className="p-8">
-                        <form action={updatePageSection} className="space-y-6">
-                            <input type="hidden" name="sectionTitle" value="Stats" />
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                                {/* Stat 1 */}
-                                <div className="space-y-2">
-                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 1 Value</label>
-                                    <input type="text" name="stat1Value" defaultValue={statsMetadata.stat1Value || "100+"} className="w-full p-2 border rounded" />
-                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 1 Label</label>
-                                    <input type="text" name="stat1Label" defaultValue={statsMetadata.stat1Label || "Years Active"} className="w-full p-2 border rounded" />
+                        {/* Stats Sub-Form */}
+                        <div>
+                            <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">Impact Statistics</h3>
+                            <form action={updatePageSection} className="space-y-6">
+                                <input type="hidden" name="sectionTitle" value="Stats" />
+                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                                    {/* Stat 1 */}
+                                    <div className="space-y-2">
+                                        <label className="block text-xs font-bold uppercase text-gray-500">Stat 1 Value</label>
+                                        <input type="text" name="stat1Value" defaultValue={statsMetadata.stat1Value || "100+"} className="w-full p-2 border rounded" />
+                                        <label className="block text-xs font-bold uppercase text-gray-500">Stat 1 Label</label>
+                                        <input type="text" name="stat1Label" defaultValue={statsMetadata.stat1Label || "Years Active"} className="w-full p-2 border rounded" />
+                                    </div>
+                                    {/* Stat 2 */}
+                                    <div className="space-y-2">
+                                        <label className="block text-xs font-bold uppercase text-gray-500">Stat 2 Value</label>
+                                        <input type="text" name="stat2Value" defaultValue={statsMetadata.stat2Value || "50k+"} className="w-full p-2 border rounded" />
+                                        <label className="block text-xs font-bold uppercase text-gray-500">Stat 2 Label</label>
+                                        <input type="text" name="stat2Label" defaultValue={statsMetadata.stat2Label || "Lives Impacted"} className="w-full p-2 border rounded" />
+                                    </div>
+                                    {/* Stat 3 */}
+                                    <div className="space-y-2">
+                                        <label className="block text-xs font-bold uppercase text-gray-500">Stat 3 Value</label>
+                                        <input type="text" name="stat3Value" defaultValue={statsMetadata.stat3Value || "20+"} className="w-full p-2 border rounded" />
+                                        <label className="block text-xs font-bold uppercase text-gray-500">Stat 3 Label</label>
+                                        <input type="text" name="stat3Label" defaultValue={statsMetadata.stat3Label || "Countries"} className="w-full p-2 border rounded" />
+                                    </div>
+                                    {/* Stat 4 */}
+                                    <div className="space-y-2">
+                                        <label className="block text-xs font-bold uppercase text-gray-500">Stat 4 Value</label>
+                                        <input type="text" name="stat4Value" defaultValue={statsMetadata.stat4Value || "100%"} className="w-full p-2 border rounded" />
+                                        <label className="block text-xs font-bold uppercase text-gray-500">Stat 4 Label</label>
+                                        <input type="text" name="stat4Label" defaultValue={statsMetadata.stat4Label || "Commitment"} className="w-full p-2 border rounded" />
+                                    </div>
                                 </div>
-                                {/* Stat 2 */}
-                                <div className="space-y-2">
-                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 2 Value</label>
-                                    <input type="text" name="stat2Value" defaultValue={statsMetadata.stat2Value || "50k+"} className="w-full p-2 border rounded" />
-                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 2 Label</label>
-                                    <input type="text" name="stat2Label" defaultValue={statsMetadata.stat2Label || "Lives Impacted"} className="w-full p-2 border rounded" />
-                                </div>
-                                {/* Stat 3 */}
-                                <div className="space-y-2">
-                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 3 Value</label>
-                                    <input type="text" name="stat3Value" defaultValue={statsMetadata.stat3Value || "20+"} className="w-full p-2 border rounded" />
-                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 3 Label</label>
-                                    <input type="text" name="stat3Label" defaultValue={statsMetadata.stat3Label || "Countries"} className="w-full p-2 border rounded" />
-                                </div>
-                                {/* Stat 4 */}
-                                <div className="space-y-2">
-                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 4 Value</label>
-                                    <input type="text" name="stat4Value" defaultValue={statsMetadata.stat4Value || "100%"} className="w-full p-2 border rounded" />
-                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 4 Label</label>
-                                    <input type="text" name="stat4Label" defaultValue={statsMetadata.stat4Label || "Commitment"} className="w-full p-2 border rounded" />
-                                </div>
-                            </div>
-                            <SubmitButton className="bg-gray-900 hover:bg-black text-white px-5 py-2 rounded-lg text-sm font-medium">Update Stats</SubmitButton>
-                        </form>
+                                <SubmitButton className="bg-gray-900 hover:bg-black text-white px-5 py-2 rounded-lg text-sm font-medium">Update Stats</SubmitButton>
+                            </form>
+                        </div>
+
                     </div>
                 </section>
 
                 {/* 4. Benefits Section Form */}
-                <section className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mt-8">
+                <section className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                     <div className="px-8 py-6 border-b border-gray-100 bg-gray-50/50">
                         <h2 className="text-2xl font-bold text-gray-800">Benefits Section</h2>
                         <p className="text-gray-500 text-sm">Customize the "Join Our Mission" section.</p>

@@ -1,15 +1,24 @@
 import Link from 'next/link'
+import { getPageSection } from '@/app/actions'
 
-export default function Navbar() {
+export default async function Navbar() {
+    const settings = await getPageSection('SiteSettings')
+    const logoUrl = settings?.metadata?.logo
     return (
         <nav className="bg-white border-b border-gray-100/50 sticky top-0 z-50 backdrop-blur-xl bg-white/80">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
                     <div className="flex-shrink-0 flex items-center">
                         <Link href="/" className="flex items-center gap-3 group">
-                            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl group-hover:bg-blue-700 transition-colors shadow-sm">
-                                R
-                            </div>
+                            {logoUrl ? (
+                                <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
+                                    <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
+                                </div>
+                            ) : (
+                                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl group-hover:bg-blue-700 transition-colors shadow-sm">
+                                    R
+                                </div>
+                            )}
                             <div className="flex flex-col">
                                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider leading-tight">Ramkrishna Vivekananda Bayam Samity</span>
                                 <span className="text-lg font-bold tracking-tight text-gray-900 group-hover:text-blue-600 transition-colors leading-tight">
