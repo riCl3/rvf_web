@@ -1,3 +1,4 @@
+import SubmitButton from '@/components/SubmitButton'
 import {
     addMilestone,
     addRecentWork,
@@ -18,16 +19,17 @@ export default async function AdminPage() {
     const works = await getRecentWorks()
     const contactInfo = await getContactInfo()
     const heroSection = await getPageSection('Hero')
-    // const aboutSection = await getPageSection('About') 
+    const benefitsSection = await getPageSection('Benefits')
 
     const contactMetadata = contactInfo?.metadata || {}
     const heroMetadata = heroSection?.metadata || {}
+    const benefitsMetadata = benefitsSection?.metadata || {}
 
     return (
         <div className="min-h-screen bg-gray-50 p-6 md:p-12 font-sans">
             <div className="max-w-7xl mx-auto space-y-12">
 
-                <header className="border-b border-gray-200 pb-8">
+                <header className="pb-8">
                     <h1 className="text-4xl font-bold text-gray-900 tracking-tight">
                         Admin Dashboard
                     </h1>
@@ -72,9 +74,9 @@ export default async function AdminPage() {
                             </div>
 
                             <div className="md:col-span-2 pt-4">
-                                <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-lg transition-colors">
+                                <SubmitButton className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-lg transition-colors">
                                     Save General Settings
-                                </button>
+                                </SubmitButton>
                             </div>
                         </form>
                     </div>
@@ -104,9 +106,47 @@ export default async function AdminPage() {
                                     <label className="block text-sm font-medium text-gray-700 mb-2">Establishment Text (Badge)</label>
                                     <input type="text" name="establishedText" defaultValue={heroMetadata.establishedText || "Established 1924"} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
                                 </div>
-                                <button type="submit" className="bg-gray-900 hover:bg-black text-white px-5 py-2 rounded-lg text-sm font-medium">Update Hero Section</button>
+                                <SubmitButton className="bg-gray-900 hover:bg-black text-white px-5 py-2 rounded-lg text-sm font-medium">Update Hero Section</SubmitButton>
                             </form>
                         </div>
+                    </div>
+                </section>
+
+                {/* Benefits Section Form - NEW */}
+                <section className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mt-8">
+                    <div className="px-8 py-6 border-b border-gray-100 bg-gray-50/50">
+                        <h2 className="text-2xl font-bold text-gray-800">Benefits Section</h2>
+                        <p className="text-gray-500 text-sm">Customize the "Join Our Mission" section.</p>
+                    </div>
+                    <div className="p-8">
+                        <form action={updatePageSection} className="space-y-4">
+                            <input type="hidden" name="sectionTitle" value="Benefits" />
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Headline</label>
+                                <input type="text" name="headline" defaultValue={benefitsMetadata.headline || "Join Our Mission"} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3 font-bold" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Subheadline</label>
+                                <textarea name="subheadline" rows={2} defaultValue={benefitsMetadata.subheadline || "We are always looking for passionate individuals."} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Benefit 1</label>
+                                    <input type="text" name="benefit1" defaultValue={benefitsMetadata.benefit1 || "Community Outreach"} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Benefit 2</label>
+                                    <input type="text" name="benefit2" defaultValue={benefitsMetadata.benefit2 || "Event Planning"} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Benefit 3</label>
+                                    <input type="text" name="benefit3" defaultValue={benefitsMetadata.benefit3 || "Fundraising"} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                                </div>
+                            </div>
+                            <div className="pt-4">
+                                <SubmitButton className="bg-gray-900 hover:bg-black text-white px-5 py-2 rounded-lg text-sm font-medium">Update Benefits Section</SubmitButton>
+                            </div>
+                        </form>
                     </div>
                 </section>
 
@@ -148,9 +188,9 @@ export default async function AdminPage() {
                                 <label htmlFor="isFeatured" className="text-sm font-medium text-emerald-900 cursor-pointer select-none">Mark as Featured Post? (Displayed prominently)</label>
                             </div>
 
-                            <button type="submit" className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-emerald-200">
+                            <SubmitButton className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-emerald-200">
                                 Publish Project
-                            </button>
+                            </SubmitButton>
                         </form>
                     </div>
 
@@ -175,9 +215,9 @@ export default async function AdminPage() {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
                                 <textarea name="description" rows={3} required className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
                             </div>
-                            <button type="submit" className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-blue-200">
+                            <SubmitButton className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-blue-200">
                                 Add Milestone
-                            </button>
+                            </SubmitButton>
                         </form>
                     </div>
                 </div>

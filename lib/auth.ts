@@ -2,7 +2,6 @@
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
-// lib/auth.ts
 export const authOptions: NextAuthOptions = {
     providers: [
         GoogleProvider({
@@ -19,10 +18,4 @@ export const authOptions: NextAuthOptions = {
             return false;
         },
     },
-    /* DELETE OR COMMENT OUT THIS SECTION TO FIX THE LOOP:
-    pages: {
-        signIn: "/api/auth/signin",
-        error: "/api/auth/error",
-    },
-    */
 };

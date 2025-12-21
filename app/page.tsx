@@ -8,7 +8,9 @@ export default async function Home() {
   const recentWorks = await getRecentWorks()
   const featuredWorks = await getFeaturedWorks()
   const heroSection = await getPageSection('Hero')
+  const benefitsSection = await getPageSection('Benefits')
   const heroData = heroSection?.metadata || {}
+  const benefitsData = benefitsSection?.metadata || {}
 
   // Defaults if no data found
   const headline = heroData.headline || "A Century of Impact"
@@ -162,23 +164,22 @@ export default async function Home() {
           <div className="md:w-1/2 bg-blue-600 p-12 text-white flex flex-col justify-center relative overflow-hidden">
             <div className="absolute inset-0 bg-blue-700 opacity-50 pattern-dots"></div>
             <div className="relative z-10">
-              <h2 className="text-3xl font-bold mb-6">Join Our Mission</h2>
+              <h2 className="text-3xl font-bold mb-6">{benefitsData.headline || "Join Our Mission"}</h2>
               <p className="text-blue-100 text-lg mb-8 leading-relaxed">
-                We are always looking for passionate individuals to help us make a difference.
-                Whether you can spare a few hours a week or want to lead a project, your contribution matters.
+                {benefitsData.subheadline || "We are always looking for passionate individuals to help us make a difference. Whether you can spare a few hours a week or want to lead a project, your contribution matters."}
               </p>
               <ul className="space-y-4 mb-8">
                 <li className="flex items-center gap-3">
                   <svg className="w-5 h-5 text-blue-200" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                  Community Outreach
+                  {benefitsData.benefit1 || "Community Outreach"}
                 </li>
                 <li className="flex items-center gap-3">
                   <svg className="w-5 h-5 text-blue-200" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                  Event Planning
+                  {benefitsData.benefit2 || "Event Planning"}
                 </li>
                 <li className="flex items-center gap-3">
                   <svg className="w-5 h-5 text-blue-200" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                  Fundraising
+                  {benefitsData.benefit3 || "Fundraising"}
                 </li>
               </ul>
               <button className="bg-white text-blue-600 font-bold py-3 px-8 rounded-lg hover:bg-blue-50 transition-colors inline-block w-max">
