@@ -1,35 +1,22 @@
-// app/admin/page.tsx
-export default function AdminPage() {
-    async function createWork(formData: FormData) {
-        'use server'
-        // This is where the magic happens. 
-        // Data from the form will arrive here.
-        const title = formData.get('title');
-        const description = formData.get('description');
+// app/page.tsx
+import Link from 'next/link';
 
-        console.log("New Work Received:", { title, description });
-        // Later, we will add one line here to save this to your database.
-    }
-
+export default function HomePage() {
     return (
-        <div className="p-10 max-w-lg mx-auto">
-            <h1 className="text-2xl font-bold mb-5">Admin: Add Recent Work</h1>
-            <form action={createWork} className="flex flex-col gap-4">
-                <input
-                    name="title"
-                    placeholder="Project Title (e.g. 100th Year Gala)"
-                    className="border p-2 rounded text-black"
-                    required
-                />
-                <textarea
-                    name="description"
-                    placeholder="What did the NGO achieve?"
-                    className="border p-2 rounded text-black"
-                />
-                <button type="submit" className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
-                    Upload to Website
-                </button>
-            </form>
-        </div>
+        <main className="flex flex-col items-center justify-center min-h-screen p-24 bg-slate-50">
+            <h1 className="text-4xl font-bold text-blue-900 mb-4">
+                Welcome to Our 100-Year NGO
+            </h1>
+            <p className="text-lg text-gray-700 mb-8 text-center max-w-2xl">
+                We are transitioning from a historic club to a modern NGO.
+                Our roadmap and mission will appear here soon.
+            </p>
+            <Link
+                href="/admin"
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            >
+                Go to Admin Dashboard
+            </Link>
+        </main>
     );
 }
