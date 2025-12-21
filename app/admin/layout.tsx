@@ -1,15 +1,14 @@
 // app/admin/layout.tsx
+import AdminHeader from './AdminHeader';
+
 export default function AdminLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
     return (
-        <section className="admin-container bg-gray-100 min-h-screen">
-            {/* You can add a side-bar or admin-only nav here later */}
-            <nav className="p-4 bg-blue-800 text-white font-bold">
-                NGO Admin Panel
-            </nav>
+        <section className="admin-container bg-gray-50 min-h-screen">
+            <AdminHeader />
             <main>{children}</main>
         </section>
     );
