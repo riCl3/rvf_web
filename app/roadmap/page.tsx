@@ -1,4 +1,5 @@
 import { getMilestones } from '../actions'
+import { IContent } from '@/models/Content'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,7 +26,7 @@ export default async function RoadmapPage() {
                         {milestones.length === 0 ? (
                             <p className="text-center text-gray-500 py-10">No milestones added yet.</p>
                         ) : (
-                            milestones.map((milestone: any, index: number) => (
+                            milestones.map((milestone: IContent, index: number) => (
                                 <div key={milestone._id} className="relative flex flex-col md:flex-row items-center group">
                                     {/* Dot */}
                                     <div className="absolute left-4 -ml-3 md:left-1/2 md:-ml-3 w-6 h-6 rounded-full border-4 border-white bg-blue-600 shadow-md z-10" />

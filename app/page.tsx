@@ -1,5 +1,6 @@
 import { getFeaturedWorks, getRecentWorks, getPageSection } from './actions'
 import Link from 'next/link'
+import { IContent } from '@/models/Content'
 
 export const dynamic = 'force-dynamic'
 
@@ -120,7 +121,7 @@ export default async function Home() {
               <p className="text-gray-500 text-lg">No recent works found. Add projects from the Admin Dashboard.</p>
             </div>
           ) : (
-            recentWorks.map((work) => (
+            recentWorks.map((work: IContent) => (
               <article key={work._id} className="flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
                 <div className="h-48 bg-gray-100 relative overflow-hidden group">
                   {/* Image */}

@@ -19,7 +19,7 @@ export async function getMilestones() {
     await dbConnect()
     const milestones = await Content.find({ type: 'milestone' }).sort({ year: -1 }).lean()
     // Convert _id to string to pass to client components if needed, or return as is for server components
-    return JSON.parse(JSON.stringify(milestones))
+    return JSON.parse(JSON.stringify(milestones)) as IContent[]
 }
 
 export async function addMilestone(formData: FormData) {
