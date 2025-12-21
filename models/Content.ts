@@ -1,6 +1,6 @@
 import mongoose, { Schema, model, models } from 'mongoose';
 
-export type ContentType = 'milestone' | 'recent_work' | 'contact_info' | 'page_section';
+export type ContentType = 'milestone' | 'recent_work' | 'contact_info' | 'page_section' | 'gallery_image';
 
 export interface IContent {
     _id: string;
@@ -24,7 +24,7 @@ const ContentSchema = new Schema<IContent>(
         type: {
             type: String,
             required: true,
-            enum: ['milestone', 'recent_work', 'contact_info', 'page_section']
+            enum: ['milestone', 'recent_work', 'contact_info', 'page_section', 'gallery_image']
         },
         title: { type: String, required: true },
         description: { type: String }, // Made optional in logic, but keeping schema simple. Ideally required for most.

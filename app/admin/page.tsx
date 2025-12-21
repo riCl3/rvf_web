@@ -3,6 +3,8 @@ import {
     addMilestone,
     addRecentWork,
     deleteContent,
+    addGalleryImage,
+    getGalleryImages,
     getMilestones,
     getRecentWorks,
     toggleFeatured,
@@ -11,6 +13,7 @@ import {
     getContactInfo,
     getPageSection
 } from '../actions'
+import { IContent } from '@/models/Content'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,10 +23,13 @@ export default async function AdminPage() {
     const contactInfo = await getContactInfo()
     const heroSection = await getPageSection('Hero')
     const benefitsSection = await getPageSection('Benefits')
+    const statsSection = await getPageSection('Stats')
+    const galleryImages = await getGalleryImages()
 
     const contactMetadata = contactInfo?.metadata || {}
     const heroMetadata = heroSection?.metadata || {}
     const benefitsMetadata = benefitsSection?.metadata || {}
+    const statsMetadata = statsSection?.metadata || {}
 
     return (
         <div className="min-h-screen bg-gray-50 p-6 md:p-12 font-sans">
@@ -82,11 +88,11 @@ export default async function AdminPage() {
                     </div>
                 </section>
 
-                {/* 2. HOMEPAGE CONTENT */}
+                {/* 2. HOMEPAGE CONTENT (Hero) */}
                 <section className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                     <div className="px-8 py-6 border-b border-gray-100 bg-gray-50/50">
-                        <h2 className="text-2xl font-bold text-gray-800">Homepage Sections</h2>
-                        <p className="text-gray-500 text-sm">Customize the text on your homepage.</p>
+                        <h2 className="text-2xl font-bold text-gray-800">Stats Section</h2>
+                        <p className="text-gray-500 text-sm">Update the impact numbers on the homepage.</p>
                     </div>
                     <div className="p-8 space-y-8">
                         {/* Hero Section Form */}
@@ -112,7 +118,51 @@ export default async function AdminPage() {
                     </div>
                 </section>
 
-                {/* Benefits Section Form - NEW */}
+                {/* 3. STATS SECTION Manager */}
+                <section className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-8">
+                    <div className="px-8 py-6 border-b border-gray-100 bg-gray-50/50">
+                        <h2 className="text-2xl font-bold text-gray-800">Stats Section</h2>
+                        <p className="text-gray-500 text-sm">Update the impact numbers on the homepage.</p>
+                    </div>
+                    <div className="p-8">
+                        <form action={updatePageSection} className="space-y-6">
+                            <input type="hidden" name="sectionTitle" value="Stats" />
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                                {/* Stat 1 */}
+                                <div className="space-y-2">
+                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 1 Value</label>
+                                    <input type="text" name="stat1Value" defaultValue={statsMetadata.stat1Value || "100+"} className="w-full p-2 border rounded" />
+                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 1 Label</label>
+                                    <input type="text" name="stat1Label" defaultValue={statsMetadata.stat1Label || "Years Active"} className="w-full p-2 border rounded" />
+                                </div>
+                                {/* Stat 2 */}
+                                <div className="space-y-2">
+                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 2 Value</label>
+                                    <input type="text" name="stat2Value" defaultValue={statsMetadata.stat2Value || "50k+"} className="w-full p-2 border rounded" />
+                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 2 Label</label>
+                                    <input type="text" name="stat2Label" defaultValue={statsMetadata.stat2Label || "Lives Impacted"} className="w-full p-2 border rounded" />
+                                </div>
+                                {/* Stat 3 */}
+                                <div className="space-y-2">
+                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 3 Value</label>
+                                    <input type="text" name="stat3Value" defaultValue={statsMetadata.stat3Value || "20+"} className="w-full p-2 border rounded" />
+                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 3 Label</label>
+                                    <input type="text" name="stat3Label" defaultValue={statsMetadata.stat3Label || "Countries"} className="w-full p-2 border rounded" />
+                                </div>
+                                {/* Stat 4 */}
+                                <div className="space-y-2">
+                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 4 Value</label>
+                                    <input type="text" name="stat4Value" defaultValue={statsMetadata.stat4Value || "100%"} className="w-full p-2 border rounded" />
+                                    <label className="block text-xs font-bold uppercase text-gray-500">Stat 4 Label</label>
+                                    <input type="text" name="stat4Label" defaultValue={statsMetadata.stat4Label || "Commitment"} className="w-full p-2 border rounded" />
+                                </div>
+                            </div>
+                            <SubmitButton className="bg-gray-900 hover:bg-black text-white px-5 py-2 rounded-lg text-sm font-medium">Update Stats</SubmitButton>
+                        </form>
+                    </div>
+                </section>
+
+                {/* 4. Benefits Section Form */}
                 <section className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mt-8">
                     <div className="px-8 py-6 border-b border-gray-100 bg-gray-50/50">
                         <h2 className="text-2xl font-bold text-gray-800">Benefits Section</h2>
@@ -143,6 +193,13 @@ export default async function AdminPage() {
                                     <input type="text" name="benefit3" defaultValue={benefitsMetadata.benefit3 || "Fundraising"} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
                                 </div>
                             </div>
+                            {/* Benefits Image */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Side Image URL</label>
+                                <input type="url" name="image" defaultValue={benefitsMetadata.image || ""} placeholder="https://example.com/image.jpg" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                                <p className="text-xs text-gray-500 mt-1">Leave empty to show the default volunteer illustration.</p>
+                            </div>
+
                             <div className="pt-4">
                                 <SubmitButton className="bg-gray-900 hover:bg-black text-white px-5 py-2 rounded-lg text-sm font-medium">Update Benefits Section</SubmitButton>
                             </div>
@@ -150,79 +207,7 @@ export default async function AdminPage() {
                     </div>
                 </section>
 
-                {/* 3. RECENT WORKS / PROJECTS */}
-                <div className="grid lg:grid-cols-2 gap-8">
-                    {/* Add Recent Work */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-                        <div className="mb-6">
-                            <h2 className="text-2xl font-bold text-gray-800">Add Project / Recent Work</h2>
-                            <p className="text-gray-500 text-sm">Add new initiatives to your portfolio.</p>
-                        </div>
-                        <form action={addRecentWork} className="space-y-5">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Project Title</label>
-                                <input type="text" name="title" required placeholder="Clean Water Initiative" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3 focus:ring-emerald-500 focus:border-emerald-500" />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                                    <select name="category" required className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3">
-                                        <option value="Health">Health</option>
-                                        <option value="Education">Education</option>
-                                        <option value="Environment">Environment</option>
-                                        <option value="Community">Community</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
-                                    <input type="url" name="image" placeholder="https://example.com/image.jpg" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                                <textarea name="description" rows={3} required className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
-                            </div>
-
-                            <div className="flex items-center gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-100">
-                                <input type="checkbox" name="isFeatured" id="isFeatured" className="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500 border-gray-300" />
-                                <label htmlFor="isFeatured" className="text-sm font-medium text-emerald-900 cursor-pointer select-none">Mark as Featured Post? (Displayed prominently)</label>
-                            </div>
-
-                            <SubmitButton className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-emerald-200">
-                                Publish Project
-                            </SubmitButton>
-                        </form>
-                    </div>
-
-                    {/* Milestone Form */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-                        <div className="mb-6">
-                            <h2 className="text-2xl font-bold text-gray-800">Add Milestone</h2>
-                            <p className="text-gray-500 text-sm">Add significant events to the roadmap.</p>
-                        </div>
-                        <form action={addMilestone} className="space-y-5">
-                            <div className="grid grid-cols-3 gap-4">
-                                <div className="col-span-1">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
-                                    <input type="number" name="year" required placeholder="2024" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
-                                </div>
-                                <div className="col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                                    <input type="text" name="title" required placeholder="Foundation Day" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                                <textarea name="description" rows={3} required className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
-                            </div>
-                            <SubmitButton className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-blue-200">
-                                Add Milestone
-                            </SubmitButton>
-                        </form>
-                    </div>
-                </div>
-
-                {/* 4. MANAGE CONTENT LISTS */}
+                {/* 5. MANAGE CONTENT LISTS */}
                 <div className="grid lg:grid-cols-2 gap-8">
                     {/* Projects List with Featured Toggle */}
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -232,7 +217,6 @@ export default async function AdminPage() {
                         </div>
                         <ul className="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
                             {works.length === 0 && <li className="p-6 text-gray-500 italic text-center">No projects added yet.</li>}
-                            {!works && <li className="p-6 text-gray-500 italic text-center">No projects added yet.</li>}
                             {works?.map((w: any) => (
                                 <li key={w._id} className="p-4 hover:bg-gray-50 transition-colors group">
                                     <div className="flex gap-4 items-start">
@@ -291,6 +275,115 @@ export default async function AdminPage() {
                                 </li>
                             ))}
                         </ul>
+                    </div>
+                </div>
+
+                {/* 6. FORMS: ADD NEW CONTENT (Recent Work & Milestone) */}
+                <div className="grid lg:grid-cols-2 gap-8">
+                    {/* Add Recent Work */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                        <div className="mb-6">
+                            <h2 className="text-2xl font-bold text-gray-800">Add Project / Recent Work</h2>
+                            <p className="text-gray-500 text-sm">Add new initiatives to your portfolio.</p>
+                        </div>
+                        <form action={addRecentWork} className="space-y-5">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Project Title</label>
+                                <input type="text" name="title" required placeholder="Clean Water Initiative" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3 focus:ring-emerald-500 focus:border-emerald-500" />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                    <select name="category" required className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3">
+                                        <option value="Health">Health</option>
+                                        <option value="Education">Education</option>
+                                        <option value="Environment">Environment</option>
+                                        <option value="Community">Community</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                                    <input type="url" name="image" placeholder="https://example.com/image.jpg" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                                <textarea name="description" rows={3} required className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                            </div>
+
+                            <div className="flex items-center gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-100">
+                                <input type="checkbox" name="isFeatured" id="isFeatured" className="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500 border-gray-300" />
+                                <label htmlFor="isFeatured" className="text-sm font-medium text-emerald-900 cursor-pointer select-none">Mark as Featured Post? (Displayed prominently)</label>
+                            </div>
+
+                            <SubmitButton className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-emerald-200">
+                                Publish Project
+                            </SubmitButton>
+                        </form>
+                    </div>
+
+                    {/* Add Milestone */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                        <div className="mb-6">
+                            <h2 className="text-2xl font-bold text-gray-800">Add Milestone</h2>
+                            <p className="text-gray-500 text-sm">Add significant events to the roadmap.</p>
+                        </div>
+                        <form action={addMilestone} className="space-y-5">
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="col-span-1">
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
+                                    <input type="number" name="year" required placeholder="2024" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                                </div>
+                                <div className="col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                                    <input type="text" name="title" required placeholder="Foundation Day" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                                <textarea name="description" rows={3} required className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                            </div>
+                            <SubmitButton className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-blue-200">
+                                Add Milestone
+                            </SubmitButton>
+                        </form>
+                    </div>
+                </div>
+
+                {/* 7. GALLERY MANAGER */}
+                <div className="grid lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-6">Add Gallery Image</h2>
+                        <form action={addGalleryImage} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                                <input type="url" name="image" required placeholder="https://..." className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                            </div>
+                            <SubmitButton className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition-all">
+                                Add to Gallery
+                            </SubmitButton>
+                        </form>
+                    </div>
+                    <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                            <h3 className="font-bold text-gray-900">Gallery Images</h3>
+                            <span className="text-xs font-medium px-2 py-1 bg-gray-200 rounded-full text-gray-600">{galleryImages.length} items</span>
+                        </div>
+                        <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-4 max-h-[400px] overflow-y-auto">
+                            {galleryImages.length === 0 && <p className="col-span-4 text-center text-gray-400 italic">No images in gallery.</p>}
+                            {galleryImages.map((img: any) => (
+                                <div key={img._id} className="relative group aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                                    <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${img.image})` }} />
+                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <form action={deleteContent.bind(null, img._id)}>
+                                            <button className="text-white bg-red-600 hover:bg-red-700 p-2 rounded-full shadow-sm">
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 

@@ -1,4 +1,4 @@
-import { getFeaturedWorks, getRecentWorks, getPageSection } from './actions'
+import { getFeaturedWorks, getRecentWorks, getPageSection, getGalleryImages } from './actions'
 import Link from 'next/link'
 import { IContent } from '@/models/Content'
 
@@ -7,10 +7,14 @@ export const dynamic = 'force-dynamic'
 export default async function Home() {
   const recentWorks = await getRecentWorks()
   const featuredWorks = await getFeaturedWorks()
+  const galleryImages = await getGalleryImages()
   const heroSection = await getPageSection('Hero')
   const benefitsSection = await getPageSection('Benefits')
+  const statsSection = await getPageSection('Stats')
+
   const heroData = heroSection?.metadata || {}
   const benefitsData = benefitsSection?.metadata || {}
+  const statsData = statsSection?.metadata || {}
 
   // Defaults if no data found
   const headline = heroData.headline || "A Century of Impact"
@@ -90,20 +94,20 @@ export default async function Home() {
       <section className="bg-white py-12 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div>
-            <div className="text-4xl font-bold text-blue-600 mb-1">100+</div>
-            <div className="text-sm text-gray-500 font-medium uppercase tracking-wide">Years Active</div>
+            <div className="text-4xl font-bold text-blue-600 mb-1">{statsData.stat1Value || "100+"}</div>
+            <div className="text-sm text-gray-500 font-medium uppercase tracking-wide">{statsData.stat1Label || "Years Active"}</div>
           </div>
           <div>
-            <div className="text-4xl font-bold text-blue-600 mb-1">50k+</div>
-            <div className="text-sm text-gray-500 font-medium uppercase tracking-wide">Lives Impacted</div>
+            <div className="text-4xl font-bold text-blue-600 mb-1">{statsData.stat2Value || "50k+"}</div>
+            <div className="text-sm text-gray-500 font-medium uppercase tracking-wide">{statsData.stat2Label || "Lives Impacted"}</div>
           </div>
           <div>
-            <div className="text-4xl font-bold text-blue-600 mb-1">20+</div>
-            <div className="text-sm text-gray-500 font-medium uppercase tracking-wide">Countries</div>
+            <div className="text-4xl font-bold text-blue-600 mb-1">{statsData.stat3Value || "20+"}</div>
+            <div className="text-sm text-gray-500 font-medium uppercase tracking-wide">{statsData.stat3Label || "Countries"}</div>
           </div>
           <div>
-            <div className="text-4xl font-bold text-blue-600 mb-1">100%</div>
-            <div className="text-sm text-gray-500 font-medium uppercase tracking-wide">Commitment</div>
+            <div className="text-4xl font-bold text-blue-600 mb-1">{statsData.stat4Value || "100%"}</div>
+            <div className="text-sm text-gray-500 font-medium uppercase tracking-wide">{statsData.stat4Label || "Commitment"}</div>
           </div>
         </div>
       </section>
@@ -187,15 +191,18 @@ export default async function Home() {
               </button>
             </div>
           </div>
-          <div className="md:w-1/2 p-12 flex items-center justify-center bg-gray-50">
-            {/* Illustration or Image placeholder */}
-            <div className="text-center">
-              <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-600">
-                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <div className="md:w-1/2 p-12 flex items-center justify-center bg-gray-50 overflow-hidden relative">
+            {benefitsData.image ? (
+              <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${benefitsData.image})` }}></div>
+            ) : (
+              <div className="text-center">
+                <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-600">
+                  <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Volunteer Network</h3>
+                <p className="text-gray-500">Join over 5,000 volunteers making a change worldwide.</p>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Volunteer Network</h3>
-              <p className="text-gray-500">Join over 5,000 volunteers making a change worldwide.</p>
-            </div>
+            )}
           </div>
         </div>
       </section>
