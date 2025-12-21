@@ -234,8 +234,8 @@ export default async function AdminPage() {
                             <span className="text-xs font-medium px-2 py-1 bg-gray-200 rounded-full text-gray-600">{milestones.length} items</span>
                         </div>
                         <ul className="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
-                            {milestones.length === 0 && <li className="p-6 text-gray-500 italic text-center">No milestones found.</li>}
-                            {milestones.map((m) => (
+                            {(!milestones || milestones.length === 0) && <li className="p-6 text-gray-500 italic text-center">No milestones found.</li>}
+                            {milestones?.map((m) => (
                                 <li key={m._id} className="p-4 hover:bg-gray-50 transition-colors flex justify-between items-start gap-4">
                                     <div>
                                         <span className="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded mb-1">{m.year}</span>
