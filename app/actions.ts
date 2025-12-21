@@ -184,3 +184,28 @@ export async function updateContactInfo(formData: FormData) {
     revalidatePath('/')
     revalidatePath('/admin')
 }
+
+// --- gallery ---
+export async function getGalleryImages() {
+    await dbConnect()
+    const images = await Content.find({ type: 'gallery_image' }).sort({ createdAt: -1 }).lean()
+    return JSON.parse(JSON.stringify(images)) as IContent[]
+}
+
+export async function addGalleryImage(formData: FormData) {
+    await checkAuth(); // Security
+    await dbConnect()
+
+    const image = formData.get('image') as string
+    if (!image) return;
+
+    await Content.create({
+        type: 'gallery_image',
+        title: 'Gallery Image',
+        description: 'Gallery Image',
+        image
+    })
+
+    revalidatePath('/admin')
+    revalidatePath('/')
+}
