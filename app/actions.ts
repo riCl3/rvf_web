@@ -3,6 +3,16 @@
 import dbConnect from '@/lib/mongodb'
 import Content, { IContent } from '@/models/Content'
 import { revalidatePath } from 'next/cache'
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+
+// Helper to check authentication
+async function checkAuth() {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        throw new Error("Unauthorized access denied.");
+    }
+}
 
 // --- milestones ---
 export async function getMilestones() {
@@ -13,6 +23,7 @@ export async function getMilestones() {
 }
 
 export async function addMilestone(formData: FormData) {
+    await checkAuth(); // New Security Layer
     await dbConnect()
 
     const year = formData.get('year')
@@ -49,6 +60,7 @@ export async function getFeaturedWorks() {
 }
 
 export async function addRecentWork(formData: FormData) {
+    await checkAuth(); // New Security Layer
     await dbConnect()
 
     const title = formData.get('title')
@@ -75,6 +87,7 @@ export async function addRecentWork(formData: FormData) {
 }
 
 export async function toggleFeatured(id: string, currentStatus: boolean) {
+    await checkAuth(); // New Security Layer
     await dbConnect()
     await Content.findByIdAndUpdate(id, { isFeatured: !currentStatus })
     revalidatePath('/admin')
@@ -83,6 +96,7 @@ export async function toggleFeatured(id: string, currentStatus: boolean) {
 
 // --- generic delete ---
 export async function deleteContent(id: string) {
+    await checkAuth(); // New Security Layer
     await dbConnect()
     await Content.findByIdAndDelete(id)
     revalidatePath('/admin')
@@ -102,6 +116,7 @@ export async function getPageSection(sectionTitle: string) {
 // Update or Create a page section
 // Expects generic metadata object
 export async function updatePageSection(formData: FormData) {
+    await checkAuth(); // New Security Layer
     await dbConnect()
 
     const sectionTitle = formData.get('sectionTitle') as string
@@ -138,6 +153,7 @@ export async function getContactInfo() {
 }
 
 export async function updateContactInfo(formData: FormData) {
+    await checkAuth(); // New Security Layer
     await dbConnect()
 
     const email = formData.get('email')
