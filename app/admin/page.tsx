@@ -192,7 +192,8 @@ export default async function AdminPage() {
                         </div>
                         <ul className="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
                             {works.length === 0 && <li className="p-6 text-gray-500 italic text-center">No projects added yet.</li>}
-                            {works.map((w) => (
+                            {!works && <li className="p-6 text-gray-500 italic text-center">No projects added yet.</li>}
+                            {works?.map((w: any) => (
                                 <li key={w._id} className="p-4 hover:bg-gray-50 transition-colors group">
                                     <div className="flex gap-4 items-start">
                                         <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0 bg-cover bg-center border border-gray-200" style={{ backgroundImage: `url(${w.image || '/placeholder.png'})` }}>
@@ -235,7 +236,7 @@ export default async function AdminPage() {
                         </div>
                         <ul className="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
                             {(!milestones || milestones.length === 0) && <li className="p-6 text-gray-500 italic text-center">No milestones found.</li>}
-                            {milestones?.map((m) => (
+                            {milestones?.map((m: any) => (
                                 <li key={m._id} className="p-4 hover:bg-gray-50 transition-colors flex justify-between items-start gap-4">
                                     <div>
                                         <span className="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded mb-1">{m.year}</span>
