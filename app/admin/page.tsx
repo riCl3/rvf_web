@@ -11,9 +11,11 @@ import {
     updateContactInfo,
     updatePageSection,
     getContactInfo,
-    getPageSection
+    getPageSection,
+    getDonations
 } from '../actions'
-import { IContent } from '@/models/Content'
+import { IContent, CONTENT_TITLES } from '@/models/Content'
+import DonationList from '@/components/DonationList'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,13 +27,16 @@ export default async function AdminPage() {
     const benefitsSection = await getPageSection('Benefits')
     const statsSection = await getPageSection('Stats')
     const settingsSection = await getPageSection('SiteSettings')
+    const donationSection = await getPageSection(CONTENT_TITLES.DONATION_PAGE)
     const galleryImages = await getGalleryImages()
+    const donations = await getDonations()
 
     const contactMetadata = contactInfo?.metadata || {}
     const heroMetadata = heroSection?.metadata || {}
     const benefitsMetadata = benefitsSection?.metadata || {}
     const statsMetadata = statsSection?.metadata || {}
     const settingsMetadata = settingsSection?.metadata || {}
+    const donationMetadata = donationSection?.metadata || {}
 
     return (
         <div className="min-h-screen bg-gray-50 p-6 md:p-12 font-sans">
@@ -43,6 +48,9 @@ export default async function AdminPage() {
                     </h1>
                     <p className="text-gray-500 mt-2 text-lg">Manage your website content, projects, and settings.</p>
                 </header>
+
+                {/* 0. DONATIONS OVERVIEW */}
+                <DonationList donations={donations} />
 
                 {/* --- SECTIONS --- */}
 
@@ -231,6 +239,59 @@ export default async function AdminPage() {
 
                             <div className="pt-4">
                                 <SubmitButton className="bg-gray-900 hover:bg-black text-white px-5 py-2 rounded-lg text-sm font-medium">Update Benefits Section</SubmitButton>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                {/* 4.1 DONATION PAGE CONTENT */}
+                <section className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="px-8 py-6 border-b border-gray-100 bg-gray-50/50">
+                        <h2 className="text-2xl font-bold text-gray-800">Donation Page</h2>
+                        <p className="text-gray-500 text-sm">Customize the /donate page content.</p>
+                    </div>
+                    <div className="p-8">
+                        <form action={updatePageSection} className="space-y-4">
+                            <input type="hidden" name="sectionTitle" value={CONTENT_TITLES.DONATION_PAGE} />
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Headline</label>
+                                <input type="text" name="headline" defaultValue={donationMetadata.headline || "Help Us Change Lives"} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3 font-bold" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Subheadline / Intro</label>
+                                <textarea name="subheadline" rows={2} defaultValue={donationMetadata.subheadline || "Together we can build a better future."} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Description (Main Text)</label>
+                                <textarea name="description" rows={4} defaultValue={donationMetadata.description || "Your contribution, no matter how small..."} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Advantage 1</label>
+                                    <input type="text" name="advantage1" defaultValue={donationMetadata.advantage1 || "Tax Deductible Receipt"} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Advantage 2</label>
+                                    <input type="text" name="advantage2" defaultValue={donationMetadata.advantage2 || "Transparency in Utilization"} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Advantage 3</label>
+                                    <input type="text" name="advantage3" defaultValue={donationMetadata.advantage3 || "Direct Impact"} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Advantage 4</label>
+                                    <input type="text" name="advantage4" defaultValue={donationMetadata.advantage4 || "Regular Updates"} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Quote</label>
+                                <input type="text" name="quote" defaultValue={donationMetadata.quote || "The best way to find yourself..."} className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3 italic" />
+                            </div>
+
+                            <div className="pt-4">
+                                <SubmitButton className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium">Update Donation Page</SubmitButton>
                             </div>
                         </form>
                     </div>

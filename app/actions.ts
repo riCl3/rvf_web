@@ -6,6 +6,7 @@ import Donation, { IDonation } from '@/models/Donation'
 import { revalidatePath } from 'next/cache'
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { sendWhatsAppNotification } from '@/lib/whatsapp';
 
 // Helper to check authentication
 async function checkAuth() {
@@ -232,8 +233,21 @@ export async function submitDonation(formData: FormData) {
         status: 'pending' // Default, but explicit is fine
     })
 
+    // Send WhatsApp Notification (Fire and Forget)
+    try {
+        // We do not await this if we truly want fire-and-forget and don't care about the result before returning.
+        // However, in serverless functions (Next.js server actions), it's often safer to await it to ensure execution 
+        // before the function context freezes/terminates, unless using internal queues.
+        // For simplicity and reliability in standard deployments, we will await it but wrap in try/catch so it doesn't fail the request.
+        await sendWhatsAppNotification(String(phoneNumber), Number(amount));
+    } catch (error) {
+        console.error('Failed to send WhatsApp notification:', error);
+        // Do not throw; we want the donation to succeed even if notification fails.
+    }
+
     revalidatePath('/admin')
 }
+
 
 export async function getDonations() {
     await checkAuth() // Secured
