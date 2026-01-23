@@ -50,7 +50,7 @@ export default async function Navbar() {
                             Admin
                         </Link>
                         <Link
-                            href="/#donate"
+                            href="/donate"
                             className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-blue-600 hover:bg-blue-700 shadow-sm hover:shadow transition-all duration-200"
                         >
                             Donate Now
@@ -60,7 +60,7 @@ export default async function Navbar() {
                     {/* Mobile Menu Button (Placeholder for simplicity) */}
                     <div className="md:hidden">
                         <Link
-                            href="/#donate"
+                            href="/donate"
                             className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-blue-600 hover:bg-blue-700 shadow-sm"
                         >
                             Donate

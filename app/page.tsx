@@ -50,7 +50,7 @@ export default async function Home() {
               Our History
             </Link>
             <Link
-              href="#donate"
+              href="/donate"
               className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-full bg-blue-600 text-white hover:bg-blue-700 hover:shadow-blue-500/50 hover:scale-105 transition-all duration-200 shadow-lg"
             >
               Donate Now
@@ -81,7 +81,7 @@ export default async function Home() {
               <p className="text-lg text-gray-600 leading-relaxed mb-8">
                 {featuredWork.description}
               </p>
-              <Link href="#donate" className="inline-flex items-center font-bold text-blue-600 hover:text-blue-800 transition-colors gap-2 group">
+              <Link href="/donate" className="inline-flex items-center font-bold text-blue-600 hover:text-blue-800 transition-colors gap-2 group">
                 Support this Project
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
               </Link>
