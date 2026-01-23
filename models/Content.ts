@@ -1,6 +1,10 @@
 import mongoose, { Schema, model, models } from 'mongoose';
 
 export type ContentType = 'milestone' | 'recent_work' | 'contact_info' | 'page_section' | 'gallery_image';
+export const CONTENT_TITLES = {
+    DONATION_PAGE: 'DonationPage'
+};
+
 
 export interface IContent {
     _id: string;

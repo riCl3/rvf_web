@@ -2,6 +2,7 @@
 
 import dbConnect from '@/lib/mongodb'
 import Content, { IContent } from '@/models/Content'
+import Donation, { IDonation } from '@/models/Donation'
 import { revalidatePath } from 'next/cache'
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -209,3 +210,35 @@ export async function addGalleryImage(formData: FormData) {
     revalidatePath('/admin')
     revalidatePath('/')
 }
+
+// --- donations ---
+
+export async function submitDonation(formData: FormData) {
+    // No auth check - public access
+    await dbConnect()
+
+    const amount = formData.get('amount')
+    const phoneNumber = formData.get('phoneNumber')
+    const message = formData.get('message')
+
+    if (!amount || !phoneNumber) {
+        throw new Error('Missing required fields: amount and phoneNumber are required.')
+    }
+
+    await Donation.create({
+        amount: Number(amount),
+        phoneNumber: String(phoneNumber),
+        message: message ? String(message) : undefined,
+        status: 'pending' // Default, but explicit is fine
+    })
+
+    revalidatePath('/admin')
+}
+
+export async function getDonations() {
+    await checkAuth() // Secured
+    await dbConnect()
+    const donations = await Donation.find({}).sort({ createdAt: -1 }).lean()
+    return JSON.parse(JSON.stringify(donations)) as IDonation[]
+}
+
