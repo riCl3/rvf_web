@@ -1,6 +1,6 @@
 import mongoose, { Schema, model, models } from 'mongoose';
 
-export type ContentType = 'milestone' | 'recent_work' | 'contact_info' | 'page_section' | 'gallery_image';
+export type ContentType = 'milestone' | 'recent_work' | 'project' | 'contact_info' | 'page_section' | 'gallery_image';
 export const CONTENT_TITLES = {
     DONATION_PAGE: 'DonationPage'
 };
@@ -28,7 +28,7 @@ const ContentSchema = new Schema<IContent>(
         type: {
             type: String,
             required: true,
-            enum: ['milestone', 'recent_work', 'contact_info', 'page_section', 'gallery_image']
+            enum: ['milestone', 'recent_work', 'project', 'contact_info', 'page_section', 'gallery_image']
         },
         title: { type: String, required: true },
         description: { type: String }, // Made optional in logic, but keeping schema simple. Ideally required for most.

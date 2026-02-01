@@ -74,7 +74,7 @@ export default function DonationList({ donations }: DonationListProps) {
                             donations.map((donation) => (
                                 <tr key={donation._id} className="hover:bg-gray-50 transition-colors">
                                     <td className="px-6 py-4 font-bold text-gray-900">
-                                        ${donation.amount}
+                                        ₹{donation.amount}
                                     </td>
                                     <td className="px-6 py-4 text-gray-600 font-mono">
                                         {donation.phoneNumber}
@@ -87,8 +87,8 @@ export default function DonationList({ donations }: DonationListProps) {
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`inline-flex px-2 py-1 text-xs font-bold rounded-full ${donation.status === 'verified' ? 'bg-green-100 text-green-700' :
-                                                donation.status === 'failed' ? 'bg-red-100 text-red-700' :
-                                                    'bg-yellow-100 text-yellow-700'
+                                            donation.status === 'failed' ? 'bg-red-100 text-red-700' :
+                                                'bg-yellow-100 text-yellow-700'
                                             }`}>
                                             {donation.status}
                                         </span>

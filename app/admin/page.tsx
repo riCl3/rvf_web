@@ -1,12 +1,12 @@
 import SubmitButton from '@/components/SubmitButton'
 import {
     addMilestone,
-    addRecentWork,
+    addProject,
     deleteContent,
     addGalleryImage,
     getGalleryImages,
     getMilestones,
-    getRecentWorks,
+    getProjects,
     toggleFeatured,
     updateContactInfo,
     updatePageSection,
@@ -21,7 +21,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function AdminPage() {
     const milestones = await getMilestones()
-    const works = await getRecentWorks()
+    const projects = await getProjects()
     const contactInfo = await getContactInfo()
     const heroSection = await getPageSection('Hero')
     const benefitsSection = await getPageSection('Benefits')
@@ -127,6 +127,8 @@ export default async function AdminPage() {
                         </form>
                     </div>
                 </section>
+
+
 
                 {/* 3. HERO CONTENT */}
                 <section className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
@@ -303,11 +305,11 @@ export default async function AdminPage() {
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                         <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
                             <h3 className="font-bold text-gray-900">Manage Projects</h3>
-                            <span className="text-xs font-medium px-2 py-1 bg-gray-200 rounded-full text-gray-600">{works.length} items</span>
+                            <span className="text-xs font-medium px-2 py-1 bg-gray-200 rounded-full text-gray-600">{projects.length} items</span>
                         </div>
                         <ul className="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
-                            {works.length === 0 && <li className="p-6 text-gray-500 italic text-center">No projects added yet.</li>}
-                            {works?.map((w: any) => (
+                            {projects.length === 0 && <li className="p-6 text-gray-500 italic text-center">No projects added yet.</li>}
+                            {projects?.map((w: any) => (
                                 <li key={w._id} className="p-4 hover:bg-gray-50 transition-colors group">
                                     <div className="flex gap-4 items-start">
                                         <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0 bg-cover bg-center border border-gray-200" style={{ backgroundImage: `url(${w.image || '/placeholder.png'})` }}>
@@ -368,23 +370,50 @@ export default async function AdminPage() {
                     </div>
                 </div>
 
-                {/* 6. FORMS: ADD NEW CONTENT (Recent Work & Milestone) */}
+                {/* 6. FORMS: ADD NEW CONTENT (Project & Milestone) */}
                 <div className="grid lg:grid-cols-2 gap-8">
-                    {/* Add Recent Work */}
+                    {/* Add Project */}
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
                         <div className="mb-6">
-                            <h2 className="text-2xl font-bold text-gray-800">Add Project / Recent Work</h2>
-                            <p className="text-gray-500 text-sm">Add new initiatives to your portfolio.</p>
+                            <h2 className="text-2xl font-bold text-gray-800">Add New Project</h2>
+                            <p className="text-gray-500 text-sm">Add detailed project information with comprehensive fields.</p>
                         </div>
-                        <form action={addRecentWork} className="space-y-5">
+                        <form action={addProject} className="space-y-5">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Project Title</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Project Title *</label>
                                 <input type="text" name="title" required placeholder="Clean Water Initiative" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3 focus:ring-emerald-500 focus:border-emerald-500" />
                             </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Project Report</label>
+                                    <input type="text" name="projectReport" placeholder="Brief project summary" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Duration</label>
+                                    <input type="text" name="duration" placeholder="e.g., 6 months" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Project Objectives</label>
+                                <textarea name="objectives" rows={3} placeholder="List the main objectives of this project..." className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Implementation Timeline</label>
+                                <textarea name="timeline" rows={3} placeholder="Describe the project timeline and milestones..." className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Project Details</label>
+                                <textarea name="details" rows={6} placeholder="Provide comprehensive details about the project, implementation, impact, and outcomes..." className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
+                            </div>
+
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                                    <select name="category" required className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3">
+                                    <select name="category" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3">
                                         <option value="Health">Health</option>
                                         <option value="Education">Education</option>
                                         <option value="Environment">Environment</option>
@@ -392,18 +421,14 @@ export default async function AdminPage() {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Image URL (Right Side)</label>
                                     <input type="url" name="image" placeholder="https://example.com/image.jpg" className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
                                 </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                                <textarea name="description" rows={3} required className="w-full text-gray-900 rounded-lg border-gray-200 bg-gray-50 border p-3" />
                             </div>
 
                             <div className="flex items-center gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-100">
                                 <input type="checkbox" name="isFeatured" id="isFeatured" className="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500 border-gray-300" />
-                                <label htmlFor="isFeatured" className="text-sm font-medium text-emerald-900 cursor-pointer select-none">Mark as Featured Post? (Displayed prominently)</label>
+                                <label htmlFor="isFeatured" className="text-sm font-medium text-emerald-900 cursor-pointer select-none">Mark as Featured Project? (Displayed prominently)</label>
                             </div>
 
                             <SubmitButton className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-emerald-200">

@@ -1,12 +1,12 @@
-import { getFeaturedWorks, getRecentWorks, getPageSection, getGalleryImages } from './actions'
+import { getFeaturedProjects, getProjects, getPageSection, getGalleryImages } from './actions'
 import Link from 'next/link'
 import { IContent } from '@/models/Content'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Home() {
-  const recentWorks = await getRecentWorks()
-  const featuredWorks = await getFeaturedWorks()
+  const recentWorks = await getProjects()
+  const featuredWorks = await getFeaturedProjects()
   const galleryImages = await getGalleryImages()
   const heroSection = await getPageSection('Hero')
   const benefitsSection = await getPageSection('Benefits')
@@ -236,16 +236,16 @@ export default async function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className="p-8 border border-gray-200 rounded-2xl hover:border-blue-500 hover:shadow-lg transition-all cursor-pointer group">
-            <div className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600">$25</div>
+            <div className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600">₹500</div>
             <p className="text-gray-500 text-sm">Provides school supplies for one child</p>
           </div>
           <div className="p-8 border-2 border-blue-600 bg-blue-50 rounded-2xl transform scale-105 shadow-md cursor-pointer relative overflow-hidden">
             <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">POPULAR</div>
-            <div className="text-3xl font-bold text-blue-700 mb-2">$50</div>
+            <div className="text-3xl font-bold text-blue-700 mb-2">₹1000</div>
             <p className="text-gray-600 text-sm">Provides clean water for a family for a month</p>
           </div>
           <div className="p-8 border border-gray-200 rounded-2xl hover:border-blue-500 hover:shadow-lg transition-all cursor-pointer group">
-            <div className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600">$100</div>
+            <div className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600">₹2000</div>
             <p className="text-gray-500 text-sm">Funds a community health workshop</p>
           </div>
         </div>
