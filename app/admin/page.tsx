@@ -309,38 +309,51 @@ export default async function AdminPage() {
                         </div>
                         <ul className="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
                             {projects.length === 0 && <li className="p-6 text-gray-500 italic text-center">No projects added yet.</li>}
-                            {projects?.map((w: any) => (
-                                <li key={w._id} className="p-4 hover:bg-gray-50 transition-colors group">
-                                    <div className="flex gap-4 items-start">
-                                        <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0 bg-cover bg-center border border-gray-200" style={{ backgroundImage: `url(${w.image || '/placeholder.png'})` }}>
-                                            {!w.image && <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No Img</div>}
-                                        </div>
-                                        <div className="flex-grow">
-                                            <div className="flex justify-between items-start mb-1">
-                                                <h4 className="font-bold text-gray-900 line-clamp-1">{w.title}</h4>
-                                                <span className="text-xs px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-100">{w.category}</span>
-                                            </div>
-                                            <p className="text-sm text-gray-500 line-clamp-1 mb-2">{w.description}</p>
+                            {projects?.map((w: any) => {
+                                const metadata = w.metadata || {}
+                                const duration = metadata.duration || ''
+                                const projectReport = metadata.projectReport || w.description || ''
 
-                                            <div className="flex items-center justify-between mt-2">
-                                                {/* Toggle Featured */}
-                                                <form action={toggleFeatured.bind(null, w._id, w.isFeatured || false)}>
-                                                    <button type="submit" className={`text-xs font-semibold px-2 py-1 rounded transition-colors flex items-center gap-1 ${w.isFeatured ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
-                                                        {w.isFeatured ? '★ Featured' : '☆ Not Featured'}
-                                                    </button>
-                                                </form>
+                                return (
+                                    <li key={w._id} className="p-4 hover:bg-gray-50 transition-colors group">
+                                        <div className="flex gap-4 items-start">
+                                            <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0 bg-cover bg-center border border-gray-200" style={{ backgroundImage: `url(${w.image || '/placeholder.png'})` }}>
+                                                {!w.image && <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No Img</div>}
+                                            </div>
+                                            <div className="flex-grow">
+                                                <div className="flex justify-between items-start mb-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <h4 className="font-bold text-gray-900">{w.title}</h4>
+                                                        {duration && (
+                                                            <span className="text-xs px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-100">
+                                                                {duration}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-xs px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-100">{w.category}</span>
+                                                </div>
+                                                <p className="text-sm text-gray-500 line-clamp-2 mb-2">{projectReport}</p>
 
-                                                {/* Delete */}
-                                                <form action={deleteContent.bind(null, w._id)}>
-                                                    <button className="text-red-600 hover:text-red-900 text-xs font-medium px-2 py-1 hover:bg-red-50 rounded">
-                                                        Delete
-                                                    </button>
-                                                </form>
+                                                <div className="flex items-center justify-between mt-2">
+                                                    {/* Toggle Featured */}
+                                                    <form action={toggleFeatured.bind(null, w._id, w.isFeatured || false)}>
+                                                        <button type="submit" className={`text-xs font-semibold px-2 py-1 rounded transition-colors flex items-center gap-1 ${w.isFeatured ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
+                                                            {w.isFeatured ? '★ Featured' : '☆ Not Featured'}
+                                                        </button>
+                                                    </form>
+
+                                                    {/* Delete */}
+                                                    <form action={deleteContent.bind(null, w._id)}>
+                                                        <button className="text-red-600 hover:text-red-900 text-xs font-medium px-2 py-1 hover:bg-red-50 rounded">
+                                                            Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </li>
-                            ))}
+                                    </li>
+                                )
+                            })}
                         </ul>
                     </div>
 
