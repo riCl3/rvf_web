@@ -1,12 +1,12 @@
-import { getFeaturedWorks, getRecentWorks, getPageSection, getGalleryImages } from './actions'
+import { getFeaturedProjects, getProjects, getPageSection, getGalleryImages } from './actions'
 import Link from 'next/link'
 import { IContent } from '@/models/Content'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Home() {
-  const recentWorks = await getRecentWorks()
-  const featuredWorks = await getFeaturedWorks()
+  const recentWorks = await getProjects()
+  const featuredWorks = await getFeaturedProjects()
   const galleryImages = await getGalleryImages()
   const heroSection = await getPageSection('Hero')
   const benefitsSection = await getPageSection('Benefits')
@@ -112,52 +112,119 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Recent Works Section */}
+      {/* Projects Section */}
       <section id="projects" className="py-24 px-6 md:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Recent Works</h2>
-            <p className="text-gray-600 text-lg">Our latest initiatives helping communities thrive.</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Our Projects</h2>
+            <p className="text-gray-600 text-lg">Detailed initiatives helping communities thrive.</p>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="space-y-8">
           {recentWorks.length === 0 ? (
             <div className="col-span-3 text-center py-20 bg-white rounded-2xl border border-dashed border-gray-300">
-              <p className="text-gray-500 text-lg">No recent works found. Add projects from the Admin Dashboard.</p>
+              <p className="text-gray-500 text-lg">No projects found. Add projects from the Admin Dashboard.</p>
             </div>
           ) : (
-            recentWorks.map((work: IContent) => (
-              <article key={work._id} className="flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-                <div className="h-48 bg-gray-100 relative overflow-hidden group">
-                  {/* Image */}
-                  <div
-                    className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                    style={{ backgroundImage: `url(${work.image || '/placeholder.png'})` }}
-                  />
-                  {/* Gradient overlay for text readability if needed, or just hover effect */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            recentWorks.map((work: IContent) => {
+              const metadata = work.metadata || {}
+              const duration = metadata.duration || ''
+              const projectReport = metadata.projectReport || work.description || ''
+              const objectives = metadata.objectives || ''
+              const timeline = metadata.timeline || ''
+              const details = metadata.details || ''
 
-                  <div className="absolute top-4 left-4">
-                    <span className="inline-block px-3 py-1 bg-white/90 backdrop-blur text-blue-700 text-xs font-bold uppercase tracking-wider rounded-md shadow-sm">
-                      {work.category || 'Project'}
-                    </span>
+              return (
+                <article key={work._id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300">
+                  <div className="grid md:grid-cols-3 gap-6 p-8">
+                    {/* Left: Content */}
+                    <div className="md:col-span-2 space-y-6">
+                      {/* Header */}
+                      <div>
+                        <div className="flex items-center gap-3 mb-3">
+                          <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider rounded-md">
+                            {work.category || 'Project'}
+                          </span>
+                          {duration && (
+                            <span className="inline-block px-3 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-md flex items-center gap-1">
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                              {duration}
+                            </span>
+                          )}
+                          {work.isFeatured && (
+                            <span className="inline-block px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold uppercase rounded-md">
+                              ★ Featured
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                          {work.title}
+                        </h3>
+                      </div>
+
+                      {/* Project Report */}
+                      {projectReport && (
+                        <div>
+                          <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-2">Project Report</h4>
+                          <p className="text-gray-700 leading-relaxed">{projectReport}</p>
+                        </div>
+                      )}
+
+                      {/* Objectives */}
+                      {objectives && (
+                        <div>
+                          <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-2">Objectives</h4>
+                          <p className="text-gray-700 leading-relaxed whitespace-pre-line">{objectives}</p>
+                        </div>
+                      )}
+
+                      {/* Timeline */}
+                      {timeline && (
+                        <div>
+                          <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-2">Implementation Timeline</h4>
+                          <p className="text-gray-700 leading-relaxed whitespace-pre-line">{timeline}</p>
+                        </div>
+                      )}
+
+                      {/* Details */}
+                      {details && (
+                        <div>
+                          <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-2">Project Details</h4>
+                          <p className="text-gray-700 leading-relaxed whitespace-pre-line">{details}</p>
+                        </div>
+                      )}
+
+                      {/* Date */}
+                      <div className="pt-4 border-t border-gray-100 text-sm text-gray-400">
+                        <span>Published: {work.createdAt ? new Date(work.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Recently'}</span>
+                      </div>
+                    </div>
+
+                    {/* Right: Image */}
+                    <div className="md:col-span-1">
+                      <div className="sticky top-8 rounded-xl overflow-hidden border border-gray-200 shadow-md h-80 md:h-full min-h-[300px]">
+                        {work.image ? (
+                          <div
+                            className="w-full h-full bg-cover bg-center"
+                            style={{ backgroundImage: `url(${work.image})` }}
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                            <div className="text-center text-gray-400">
+                              <svg className="w-16 h-16 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                              </svg>
+                              <p className="text-sm">No Image</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="p-6 flex flex-col flex-grow">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
-                    {work.title}
-                  </h3>
-                  <p className="text-gray-600 line-clamp-3 mb-6 flex-grow leading-relaxed">
-                    {work.description}
-                  </p>
-                  <div className="mt-auto pt-4 border-t border-gray-50 flex justify-between items-center text-sm text-gray-400">
-                    <span>{work.createdAt ? new Date(work.createdAt).toLocaleDateString() : 'Recently'}</span>
-                    {work.isFeatured && <span className="text-amber-500 font-bold text-xs uppercase">Featured</span>}
-                  </div>
-                </div>
-              </article>
-            ))
+                </article>
+              )
+            })
           )}
         </div>
       </section>
@@ -236,16 +303,16 @@ export default async function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className="p-8 border border-gray-200 rounded-2xl hover:border-blue-500 hover:shadow-lg transition-all cursor-pointer group">
-            <div className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600">$25</div>
+            <div className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600">₹500</div>
             <p className="text-gray-500 text-sm">Provides school supplies for one child</p>
           </div>
           <div className="p-8 border-2 border-blue-600 bg-blue-50 rounded-2xl transform scale-105 shadow-md cursor-pointer relative overflow-hidden">
             <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">POPULAR</div>
-            <div className="text-3xl font-bold text-blue-700 mb-2">$50</div>
+            <div className="text-3xl font-bold text-blue-700 mb-2">₹1000</div>
             <p className="text-gray-600 text-sm">Provides clean water for a family for a month</p>
           </div>
           <div className="p-8 border border-gray-200 rounded-2xl hover:border-blue-500 hover:shadow-lg transition-all cursor-pointer group">
-            <div className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600">$100</div>
+            <div className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600">₹2000</div>
             <p className="text-gray-500 text-sm">Funds a community health workshop</p>
           </div>
         </div>

@@ -10,7 +10,7 @@ export default function DonationForm() {
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
-    const PRESETS = [25, 50, 100, 500]
+    const PRESETS = [100, 500, 1000, 2000]
 
     async function handleSubmit(formData: FormData) {
         setError(null)
@@ -87,16 +87,16 @@ export default function DonationForm() {
                                     type="button"
                                     onClick={() => handlePresetClick(preset)}
                                     className={`py-3 px-4 rounded-xl font-bold transition-all border ${amount === preset
-                                            ? 'bg-blue-600 text-white border-blue-600 shadow-lg scale-105'
-                                            : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                                        ? 'bg-blue-600 text-white border-blue-600 shadow-lg scale-105'
+                                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-blue-300 hover:bg-blue-50'
                                         }`}
                                 >
-                                    ${preset}
+                                    ₹{preset}
                                 </button>
                             ))}
                         </div>
                         <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">$</span>
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">₹</span>
                             <input
                                 type="number"
                                 name="custom_amount_display" // Not sent directly if we use hidden input

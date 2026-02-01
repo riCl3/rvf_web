@@ -6,7 +6,7 @@ import Donation, { IDonation } from '@/models/Donation'
 import { revalidatePath } from 'next/cache'
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import { sendWhatsAppNotification } from '@/lib/whatsapp';
+
 
 // Helper to check authentication
 async function checkAuth() {
@@ -48,38 +48,49 @@ export async function addMilestone(formData: FormData) {
     revalidatePath('/')
 }
 
-// --- recent works ---
-export async function getRecentWorks() {
+// --- projects ---
+export async function getProjects() {
     await dbConnect()
-    const works = await Content.find({ type: 'recent_work' }).sort({ createdAt: -1 }).lean()
-    return JSON.parse(JSON.stringify(works)) as IContent[]
+    const projects = await Content.find({ type: 'project' }).sort({ createdAt: -1 }).lean()
+    return JSON.parse(JSON.stringify(projects)) as IContent[]
 }
 
-export async function getFeaturedWorks() {
+export async function getFeaturedProjects() {
     await dbConnect()
-    const works = await Content.find({ type: 'recent_work', isFeatured: true }).sort({ createdAt: -1 }).lean()
-    return JSON.parse(JSON.stringify(works)) as IContent[]
+    const projects = await Content.find({ type: 'project', isFeatured: true }).sort({ createdAt: -1 }).lean()
+    return JSON.parse(JSON.stringify(projects)) as IContent[]
 }
 
-export async function addRecentWork(formData: FormData) {
+export async function addProject(formData: FormData) {
     await checkAuth(); // New Security Layer
     await dbConnect()
 
     const title = formData.get('title')
     const category = formData.get('category')
-    const description = formData.get('description')
+    const projectReport = formData.get('projectReport')
+    const duration = formData.get('duration')
+    const objectives = formData.get('objectives')
+    const timeline = formData.get('timeline')
+    const details = formData.get('details')
     const image = formData.get('image') // Image URL
     const isFeatured = formData.get('isFeatured') === 'on'
 
-    if (!title || !category || !description) {
-        throw new Error('Missing required fields')
+    if (!title) {
+        throw new Error('Project title is required')
     }
 
     await Content.create({
-        type: 'recent_work',
+        type: 'project',
         title,
-        category,
-        description,
+        category: category || '',
+        description: String(projectReport || ''),
+        metadata: {
+            projectReport: projectReport || '',
+            duration: duration || '',
+            objectives: objectives || '',
+            timeline: timeline || '',
+            details: details || ''
+        },
         image,
         isFeatured
     })
@@ -233,17 +244,7 @@ export async function submitDonation(formData: FormData) {
         status: 'pending' // Default, but explicit is fine
     })
 
-    // Send WhatsApp Notification (Fire and Forget)
-    try {
-        // We do not await this if we truly want fire-and-forget and don't care about the result before returning.
-        // However, in serverless functions (Next.js server actions), it's often safer to await it to ensure execution 
-        // before the function context freezes/terminates, unless using internal queues.
-        // For simplicity and reliability in standard deployments, we will await it but wrap in try/catch so it doesn't fail the request.
-        await sendWhatsAppNotification(String(phoneNumber), Number(amount));
-    } catch (error) {
-        console.error('Failed to send WhatsApp notification:', error);
-        // Do not throw; we want the donation to succeed even if notification fails.
-    }
+
 
     revalidatePath('/admin')
 }
@@ -255,4 +256,7 @@ export async function getDonations() {
     const donations = await Donation.find({}).sort({ createdAt: -1 }).lean()
     return JSON.parse(JSON.stringify(donations)) as IDonation[]
 }
+
+
+
 
